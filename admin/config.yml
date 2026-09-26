@@ -1,34 +1,16 @@
-## Decap CMS configuration for a GitHub-Pages-hosted site.
+## Decap CMS configuration for a Netlify-hosted site.
 ##
-## GitHub Pages cannot run server code, and Decap's "github" backend needs a small
-## server step to complete GitHub login (an OAuth handshake). Two ways to provide it,
-## from least to most setup — pick one and fill in the two lines marked below:
-##
-##  A) Netlify used ONLY for login, site still served by GitHub Pages.
-##     Create a free Netlify account, "Add new site" from this same GitHub repo (you
-##     can ignore the deployed copy it makes), then in that Netlify site turn on
-##     Site settings > Identity, and under Identity > Services enable Git Gateway.
-##     Then set:
-##       backend.name: git-gateway
-##       (delete the repo/branch/base_url/auth_endpoint lines below)
-##     and add this line inside <head> of admin/index.html, above the decap-cms script:
-##       <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
-##
-##  B) Fully independent of Netlify: run a tiny OAuth proxy yourself, for free, on
-##     Cloudflare Workers. See https://github.com/ConnorPrettyman/decap-proxy for the
-##     ready-made version (a few minutes to deploy). Then set base_url below to your
-##     worker's URL (e.g. https://decap-auth.your-subdomain.workers.dev).
-##
-## Either way, you'll also need a GitHub OAuth App (GitHub Settings > Developer
-## settings > OAuth Apps > New OAuth App), with its callback URL set per whichever
-## guide above you follow.
+## Netlify provides its own login (Identity) and its own way of writing back to your
+## GitHub repo (Git Gateway), so no separate GitHub OAuth App or proxy server is
+## needed. Turn both on in the Netlify dashboard for this site:
+##   Site configuration > Identity > Enable Identity
+##   Identity > Registration: set to "Invite only"
+##   Identity > Services > Git Gateway > Enable Git Gateway
+## Then invite yourself: Identity tab > Invite users > your email.
 
 backend:
-  name: github
-  repo: your-github-username/your-repo-name   # <-- set this, e.g. lakshaykhichar/lakshaykhichar.github.io
+  name: git-gateway
   branch: main
-  base_url: https://your-oauth-provider.example.com   # <-- set per option A or B above
-  auth_endpoint: auth
 
 # Where images you upload from the admin panel are stored and served from.
 media_folder: "content/images/uploads"
