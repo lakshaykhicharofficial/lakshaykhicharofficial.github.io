@@ -221,6 +221,7 @@
   }
   .post-head time { color: var(--muted); font-size: 0.9rem; }
   .posts p { margin: 0.4rem 0 0; color: var(--muted); max-width: 56ch; }
+  .see-all { display: inline-block; margin-top: 1.5rem; font-size: 0.95rem; color: var(--ink); text-decoration: underline; text-underline-offset: 0.25em; }
 
   /* Photography */
   .photo-group { margin-bottom: 3rem; }
@@ -411,6 +412,7 @@
       <ul class="posts" id="posts-list">
         <li class="posts-empty">Posts will appear here once published from the admin panel.</li>
       </ul>
+      <a class="see-all" href="writing.html">See all posts →</a>
     </div>
   </section>
 
@@ -515,20 +517,41 @@
   // Instagram, X, Facebook and YouTube links in the Contact section are placeholders ("#").
   // Replace each href with your real profile URL. LinkedIn is already filled in.
 
+  // Turns a post title into a URL-friendly slug, matching writing.html and post.html
+  // exactly, so a given post always resolves to the same post.html?slug=... link.
+  function slugify(s) {
+    return (s || "").toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "") || "post";
+  }
+  function withSlugs(posts) {
+    var seen = {};
+    return posts.map(function (p) {
+      var base = slugify(p.title);
+      var slug = base, n = 2;
+      while (seen[slug]) { slug = base + "-" + (n++); }
+      seen[slug] = true;
+      p.slug = slug;
+      return p;
+    });
+  }
+
   // ---- Writing: loads content/posts.json, written by the Decap CMS admin panel at /admin ----
   // Only entries with status "published" are shown; "draft" entries stay hidden until published.
+  // The homepage shows just the latest 4; writing.html lists every published post.
   fetch("content/posts.json").then(function (r) { return r.json(); }).then(function (data) {
     var posts = (data.posts || []).filter(function (p) { return p.status === "published"; });
     posts.sort(function (a, b) { return new Date(b.date) - new Date(a.date); });
+    posts = withSlugs(posts);
     var list = document.getElementById("posts-list");
     if (!posts.length) return; // keep the placeholder message
     list.innerHTML = "";
-    posts.forEach(function (p) {
+    posts.slice(0, 4).forEach(function (p) {
       var li = document.createElement("li");
       var d = p.date ? new Date(p.date) : null;
       var dateHtml = d ? '<time datetime="' + p.date + '">' + d.toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" }) + "</time>" : "";
-      li.innerHTML = '<article><div class="post-head"><h3></h3>' + dateHtml + '</div><p></p></article>';
-      li.querySelector("h3").textContent = p.title || "";
+      li.innerHTML = '<article><div class="post-head"><h3><a></a></h3>' + dateHtml + '</div><p></p></article>';
+      var a = li.querySelector("h3 a");
+      a.textContent = p.title || "";
+      a.href = "post.html?slug=" + encodeURIComponent(p.slug);
       li.querySelector("p").textContent = p.excerpt || "";
       list.appendChild(li);
     });
