@@ -326,6 +326,21 @@
 </style>
 </head>
 <body>
+<!-- Handles the link in your Netlify Identity invite email: it opens this page with a
+     token, sets your password, then sends you on to /admin to log in. -->
+<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+<script>
+  if (window.netlifyIdentity) {
+    window.netlifyIdentity.on("init", function (user) {
+      if (!user) {
+        window.netlifyIdentity.on("login", function () {
+          document.location.href = "/admin/";
+        });
+      }
+    });
+  }
+</script>
+
 
 <header class="topbar">
   <div class="wrap-wide topbar-inner">
