@@ -1,0 +1,88 @@
+## Decap CMS configuration for a GitHub-Pages-hosted site.
+##
+## GitHub Pages cannot run server code, and Decap's "github" backend needs a small
+## server step to complete GitHub login (an OAuth handshake). Two ways to provide it,
+## from least to most setup — pick one and fill in the two lines marked below:
+##
+##  A) Netlify used ONLY for login, site still served by GitHub Pages.
+##     Create a free Netlify account, "Add new site" from this same GitHub repo (you
+##     can ignore the deployed copy it makes), then in that Netlify site turn on
+##     Site settings > Identity, and under Identity > Services enable Git Gateway.
+##     Then set:
+##       backend.name: git-gateway
+##       (delete the repo/branch/base_url/auth_endpoint lines below)
+##     and add this line inside <head> of admin/index.html, above the decap-cms script:
+##       <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+##
+##  B) Fully independent of Netlify: run a tiny OAuth proxy yourself, for free, on
+##     Cloudflare Workers. See https://github.com/ConnorPrettyman/decap-proxy for the
+##     ready-made version (a few minutes to deploy). Then set base_url below to your
+##     worker's URL (e.g. https://decap-auth.your-subdomain.workers.dev).
+##
+## Either way, you'll also need a GitHub OAuth App (GitHub Settings > Developer
+## settings > OAuth Apps > New OAuth App), with its callback URL set per whichever
+## guide above you follow.
+
+backend:
+  name: github
+  repo: your-github-username/your-repo-name   # <-- set this, e.g. lakshaykhichar/lakshaykhichar.github.io
+  branch: main
+  base_url: https://your-oauth-provider.example.com   # <-- set per option A or B above
+  auth_endpoint: auth
+
+# Where images you upload from the admin panel are stored and served from.
+media_folder: "content/images/uploads"
+public_folder: "/content/images/uploads"
+
+# The site reads content/posts.json and content/photos.json directly (see index.html),
+# so both collections below are single-file "list" collections — no build step needed.
+collections:
+  - name: "posts"
+    label: "Writing"
+    files:
+      - name: "posts"
+        label: "All posts"
+        file: "content/posts.json"
+        fields:
+          - label: "Posts"
+            name: "posts"
+            widget: "list"
+            summary: "{{title}} — {{status}}"
+            fields:
+              - { label: "Title", name: "title", widget: "string" }
+              - { label: "Date", name: "date", widget: "datetime" }
+              - { label: "Excerpt", name: "excerpt", widget: "text", hint: "One or two lines, shown in the list on the site." }
+              - { label: "Body", name: "body", widget: "markdown", required: false }
+              - label: "Status"
+                name: "status"
+                widget: "select"
+                options: ["draft", "published"]
+                default: "draft"
+                hint: "Stays hidden on the site until you set this to published."
+
+  - name: "photos"
+    label: "Photos"
+    files:
+      - name: "photos"
+        label: "All photos"
+        file: "content/photos.json"
+        fields:
+          - label: "Photos"
+            name: "photos"
+            widget: "list"
+            summary: "{{group}} — {{status}}"
+            fields:
+              - label: "Section"
+                name: "group"
+                widget: "select"
+                options:
+                  - { label: "Frames (surroundings, things you find interesting)", value: "frames" }
+                  - { label: "Moments (photos of you)", value: "moments" }
+              - { label: "Image", name: "image", widget: "image" }
+              - { label: "Caption", name: "caption", widget: "string", required: false }
+              - label: "Status"
+                name: "status"
+                widget: "select"
+                options: ["draft", "published"]
+                default: "draft"
+                hint: "Stays hidden on the site until you set this to published."
