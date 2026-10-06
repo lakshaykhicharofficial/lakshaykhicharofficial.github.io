@@ -1,3 +1,34 @@
 {
-  "photos": []
+  "photos": [
+    {
+      "group": "moments",
+      "image": "content/images/uploads/gulmarg_skiing_1.JPG",
+      "caption": "Skiing in Gulmarg",
+      "status": "published"
+    },
+    {
+      "group": "moments",
+      "image": "content/images/uploads/gulmarg_skiing_2.JPG",
+      "caption": "Skiing in Gulmarg",
+      "status": "published"
+    },
+    {
+      "group": "moments",
+      "image": "content/images/uploads/butterfly_swimming.jpg",
+      "caption": "Butterfly stroke",
+      "status": "published"
+    },
+    {
+      "group": "moments",
+      "image": "content/images/uploads/all_rounder_xaviers.JPG",
+      "caption": "All-rounder, Xavier's",
+      "status": "published"
+    },
+    {
+      "group": "moments",
+      "image": "content/images/uploads/sports_date_handshake.jpg",
+      "caption": "Sports day",
+      "status": "published"
+    }
+  ]
 }
