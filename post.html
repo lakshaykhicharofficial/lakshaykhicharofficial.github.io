@@ -71,7 +71,27 @@
   #post-date { color: var(--muted); font-size: 0.9rem; }
   #post-title { margin: 0.5rem 0 0; font-family: var(--serif); font-weight: 400; font-size: clamp(2.25rem, 6vw, 3.25rem); line-height: 1.1; }
 
-  .post-body { padding-bottom: 5rem; }
+  /* Byline: author, date, share and socials, right under the title */
+  .byline { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem 1.5rem; margin: 1.75rem 0 1.5rem; padding: 1rem 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .byline-author { display: flex; align-items: center; gap: 0.75rem; min-width: 0; flex-wrap: wrap; }
+  .byline-avatar { width: 2.75rem; height: 2.75rem; border-radius: 50%; object-fit: cover; border: 1px solid var(--line); flex: none; }
+  .byline-name { font-weight: 600; font-size: 0.95rem; }
+  .byline .dot { color: var(--muted); }
+  .byline #post-date { color: var(--muted); font-size: 0.95rem; }
+  .byline-actions { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
+  .share-btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.45rem 1rem; border: 1px solid var(--line); border-radius: 999px; background: transparent; color: var(--ink); font: inherit; font-size: 0.9rem; cursor: pointer; }
+  .share-btn:hover { border-color: var(--ink); }
+  .share-btn svg { width: 1rem; height: 1rem; }
+  .byline .vr { width: 1px; height: 1.4rem; background: var(--line); }
+  .byline-socials { display: flex; align-items: center; gap: 0.25rem; }
+  .byline-socials a { display: grid; place-items: center; width: 2.1rem; height: 2.1rem; color: var(--muted); text-decoration: none; }
+  .byline-socials a:hover { color: var(--ink); }
+  .byline-socials svg { width: 1.15rem; height: 1.15rem; }
+  @media (max-width: 560px) { .byline .vr { display: none; } }
+
+  .post-body { padding-bottom: 2.5rem; }
+  .byline-end { padding-bottom: 5rem; }
+  .byline-end .byline { margin: 0; }
   .post-body p { margin: 0 0 1.3rem; }
   .post-body h2 { font-family: var(--serif); font-weight: 500; font-size: 1.8rem; margin: 2.2rem 0 1rem; }
   .post-body h3 { font-family: var(--serif); font-weight: 500; font-size: 1.4rem; margin: 1.8rem 0 0.8rem; }
@@ -81,6 +101,17 @@
   .post-body blockquote { margin: 0 0 1.3rem; padding-left: 1rem; border-left: 2px solid var(--line); color: var(--muted); font-style: italic; }
   .post-body img { max-width: 100%; border-radius: 8px; }
   .post-not-found { color: var(--muted); }
+
+  /* Keep reading: the latest other posts, shown after the one being read */
+  .more { border-top: 1px solid var(--line); padding: 3rem 0 5rem; }
+  .more h2 { margin: 0 0 1.75rem; font-family: var(--serif); font-weight: 400; font-size: clamp(1.8rem, 5vw, 2.4rem); line-height: 1.1; }
+  .post-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr)); gap: 1.25rem; }
+  .post-card { display: flex; flex-direction: column; aspect-ratio: 1 / 1; padding: 1.5rem; border: 1px solid var(--line); border-radius: 10px; text-decoration: none; color: var(--ink); }
+  .post-card:hover { border-color: var(--ink); }
+  .post-card time { color: var(--muted); font-size: 0.85rem; }
+  .post-card h3 { margin: 0.6rem 0 0.75rem; font-family: var(--serif); font-weight: 500; font-size: 1.5rem; line-height: 1.2; }
+  .post-card p { margin: 0; color: var(--muted); font-size: 0.95rem; overflow: hidden; }
+  .post-card .read-more { margin-top: auto; font-size: 0.85rem; text-decoration: underline; text-underline-offset: 0.25em; }
 
   footer { padding: 2rem 0 3rem; color: var(--muted); font-size: 0.9rem; border-top: 1px solid var(--line); }
 </style>
@@ -113,14 +144,54 @@
   <section class="subhead">
     <div class="wrap">
       <a class="back-link" href="writing.html">← All posts</a>
-      <time id="post-date"></time>
       <h1 id="post-title">Loading…</h1>
+      <div class="byline">
+        <div class="byline-author">
+          <img class="byline-avatar" src="data:image/jpeg;base64,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" alt="Lakshay Khichar" width="44" height="44">
+          <span class="byline-name">Lakshay Khichar</span>
+          <span class="dot" aria-hidden="true">&middot;</span>
+          <time id="post-date"></time>
+        </div>
+        <div class="byline-actions">
+          <button class="share-btn" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.6" y1="13.5" x2="15.4" y2="17.5"/><line x1="15.4" y1="6.5" x2="8.6" y2="10.5"/></svg>
+            <span class="share-label">Share</span>
+          </button>
+          <span class="vr" aria-hidden="true"></span>
+          <!-- Keep these links the same as the social icons at the bottom of index.html -->
+          <div class="byline-socials" aria-label="Social links">
+        <a href="https://www.instagram.com/_lakshaykhichar" aria-label="Instagram" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="0.6" fill="currentColor" stroke="none"/></svg>
+        </a>
+        <a href="https://x.com/khicharlakshay" aria-label="X" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.153h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/></svg>
+        </a>
+        <a href="https://www.linkedin.com/in/lakshaykhichar/" aria-label="LinkedIn" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><line x1="7.5" y1="10" x2="7.5" y2="17"/><circle cx="7.5" cy="6.8" r="0.6" fill="currentColor" stroke="none"/><path d="M11.5 17v-4.5c0-1.4 1-2.2 2.2-2.2 1.2 0 2 .8 2 2.2V17"/></svg>
+        </a>
+        <a href="https://www.facebook.com/share/19YuV4GhSX/" aria-label="Facebook" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 21v-7h2.4l.4-3H14V9c0-.9.3-1.5 1.7-1.5H17V4.8c-.3 0-1.2-.1-2.3-.1-2.3 0-3.9 1.4-3.9 4v2.2H8.5v3H10.8v7z"/></svg>
+        </a>
+        <a href="https://www.youtube.com/@lakshaykhichar" aria-label="YouTube" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6.5" width="18" height="11" rx="3.5"/><path d="M10.5 9.5l5 2.5-5 2.5z" fill="currentColor" stroke="none"/></svg>
+        </a>
+      </div>
+        </div>
+      </div>
     </div>
   </section>
 
   <div class="wrap">
     <div class="post-body" id="post-body"></div>
+    <div class="byline-end" id="byline-end"></div>
   </div>
+
+  <section class="more" id="more" hidden>
+    <div class="wrap-wide">
+      <h2>Keep reading</h2>
+      <div class="post-grid" id="more-grid"></div>
+    </div>
+  </section>
 </main>
 
 <footer>
@@ -166,6 +237,36 @@
     });
   }
 
+  // ---- Share: native share sheet where available, otherwise copy the link ----
+  // One handler covers both bylines (under the title and at the end of the post).
+  document.addEventListener("click", function (e) {
+    var btn = e.target.closest(".share-btn");
+    if (!btn) return;
+    var label = btn.querySelector(".share-label");
+    var url = window.location.href;
+    var title = document.getElementById("post-title").textContent;
+    function flash(text) {
+      label.textContent = text;
+      clearTimeout(btn._t);
+      btn._t = setTimeout(function () { label.textContent = "Share"; }, 2000);
+    }
+    function copyLink() {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(url).then(function () { flash("Link copied"); },
+          function () { window.prompt("Copy this link", url); });
+      } else {
+        window.prompt("Copy this link", url);
+      }
+    }
+    if (navigator.share) {
+      navigator.share({ title: title, url: url }).catch(function (err) {
+        if (err && err.name !== "AbortError") copyLink(); // cancelled = do nothing
+      });
+    } else {
+      copyLink();
+    }
+  });
+
   var params = new URLSearchParams(window.location.search);
   var wantedSlug = params.get("slug");
 
@@ -176,6 +277,7 @@
     var post = posts.find(function (p) { return p.slug === wantedSlug; });
 
     if (!post) {
+      document.querySelector(".byline").style.display = "none";
       document.getElementById("post-title").textContent = "Post not found";
       document.getElementById("post-body").innerHTML = '<p class="post-not-found">This post may have been unpublished, or the link is out of date. <a href="writing.html">See all posts</a>.</p>';
       return;
@@ -185,10 +287,16 @@
     document.getElementById("post-title").textContent = post.title || "";
     var d = post.date ? new Date(post.date) : null;
     var timeEl = document.getElementById("post-date");
+    if (!d) document.querySelector(".byline .dot").style.display = "none";
     if (d) {
       timeEl.setAttribute("datetime", post.date);
       timeEl.textContent = d.toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" });
     }
+    // Same byline again once the write-up ends (copied so the links live in one place)
+    var endCopy = document.querySelector(".byline").cloneNode(true);
+    endCopy.querySelectorAll("[id]").forEach(function (el) { el.removeAttribute("id"); });
+    document.getElementById("byline-end").appendChild(endCopy);
+
     var bodyEl = document.getElementById("post-body");
     if (window.marked && post.body) {
       bodyEl.innerHTML = marked.parse(post.body);
@@ -196,7 +304,26 @@
       bodyEl.innerHTML = "<p></p>";
       bodyEl.querySelector("p").textContent = post.excerpt;
     }
+
+    // "Keep reading": the 3 latest other posts (posts is already newest first)
+    var others = posts.filter(function (o) { return o.slug !== post.slug; }).slice(0, 3);
+    if (others.length) {
+      var moreGrid = document.getElementById("more-grid");
+      others.forEach(function (p) {
+        var a = document.createElement("a");
+        a.className = "post-card";
+        a.href = "post.html?slug=" + encodeURIComponent(p.slug);
+        var pd = p.date ? new Date(p.date) : null;
+        var dateHtml = pd ? '<time datetime="' + p.date + '">' + pd.toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" }) + "</time>" : "";
+        a.innerHTML = dateHtml + '<h3></h3><p></p><span class="read-more">Read post →</span>';
+        a.querySelector("h3").textContent = p.title || "";
+        a.querySelector("p").textContent = p.excerpt || "";
+        moreGrid.appendChild(a);
+      });
+      document.getElementById("more").hidden = false;
+    }
   }).catch(function () {
+    document.querySelector(".byline").style.display = "none";
     document.getElementById("post-title").textContent = "Post not found";
     document.getElementById("post-body").innerHTML = '<p class="post-not-found">Couldn\'t load posts right now. <a href="writing.html">See all posts</a>.</p>';
   });
