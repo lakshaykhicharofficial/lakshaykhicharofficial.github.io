@@ -1,3 +1,10 @@
 {
-  "photos": []
+  "photos": [
+    {
+      "group": "moments",
+      "image": "content/images/uploads/all_rounder_xaviers.JPG",
+      "caption": "",
+      "status": "published"
+    }
+  ]
 }
